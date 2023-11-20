@@ -18,7 +18,6 @@
 //
 
 #include "image8bit.h"
-
 #include <assert.h>
 #include <ctype.h>
 #include <errno.h>
@@ -50,7 +49,7 @@ struct image {
   int width;
   int height;
   int maxval;   // maximum gray value (pixels with maxval are pure WHITE)
-  uint8_t pixel; // pixel data (a raster scan)
+  uint8* pixel; // pixel data (a raster scan)
 };
 
 
@@ -167,35 +166,37 @@ void ImageInit(void) { ///
 /// On success, a new image is returned.
 /// (The caller is responsible for destroying the returned image!)
 /// On failure, returns NULL and errno/errCause are set accordingly.
-Image ImageCreate(int width, int height, uint8 maxval) { ///
+Image ImageCreate(int width, int height, uint8 maxval) {
   assert(width >= 0);
   assert(height >= 0);
   assert(0 < maxval && maxval <= PixMax);
 
-  // Insert your code here!
-  Image newImage = (Image)malloc(sizeof(Image));
+  // Allocate memory for the Image struct
+  Image newImage = (Image)malloc(sizeof(struct image));
+  if (newImage == NULL) { 
+    return NULL;
+  }
+
   newImage->width = width;
   newImage->height = height;
   newImage->maxval = maxval;
 
-  Image* newImage = malloc(sizeof(Image));
-  if (newImage == NULL) { 
-    return NULL;}
-
   // Allocate memory for image data
-  newImage->pixel = malloc(width * height * sizeof(uint8_t));
+  newImage->pixel = (uint8 *)calloc(width * height, sizeof(uint8));
   if (newImage->pixel == NULL) {
-      free(newImage);
-      return NULL;
-    }
-    
-  // Initialize image data with black pixels (0)
-  for (int i = 0; i < width * height; i++) {
-      newImage->pixel[i] = 0;
+    free(newImage);
+    return NULL;
   }
 
   return newImage;
+  if (newImage->pixel == NULL) {
+      free(newImage);
+      return NULL;
+  }
+    
 
+
+  return newImage;
 }
 
 /// Destroy the image pointed to by (*imgp).
@@ -351,9 +352,16 @@ int ImageValidRect(Image img, int x, int y, int w, int h) { ///
 static inline int G(Image img, int x, int y) {
   int index;
   // Insert your code here!
-  assert (0 <= index && index < img->width*img->height);
+  assert (0 <= x && x < img->width);
+  assert (0 <= y && y < img->height);
+
+  index = y * img->width + x;
+  assert (0 <= index && index < img->width * img->height);
   return index;
 }
+
+
+
 
 /// Get the pixel (level) at position (x,y).
 uint8 ImageGetPixel(Image img, int x, int y) { ///
