@@ -172,10 +172,13 @@ Image ImageCreate(int width, int height, uint8 maxval) { ///
   assert (height >= 0);
   assert (0 < maxval && maxval <= PixMax);
   // Insert your code here!
-  Image newImage = malloc(sizeof(struct Image));
+  Image newImage = malloc(sizeof(Image));
   newImage -> width = width;
   newImage -> height = height;
   newImage -> maxval = maxval;
+
+  Image* newImage = malloc(sizeof(Image));
+  if (newImage == NULL) { return NULL;}
   //FALTA PARTE
 
 }
@@ -188,6 +191,12 @@ Image ImageCreate(int width, int height, uint8 maxval) { ///
 void ImageDestroy(Image* imgp) { ///
   assert (imgp != NULL);
   // Insert your code here!
+
+  if (*imgp != NULL){
+    free((*imgp)->pixel); //Liberta memória alocada para os píxeis
+    free((*imgp));  //Liberta a memória allocada para Image struct
+    *imgp = NULL;   // Define NULL para o ponteiro
+  }
 }
 
 
