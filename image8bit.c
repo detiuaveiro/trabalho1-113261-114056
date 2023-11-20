@@ -27,6 +27,7 @@
 #include "instrumentation.h"
 
 // The data structure
+//
 // An image is stored in a structure containing 3 fields:
 // Two integers store the image width and height.
 // The other field is a pointer to an array that stores the 8-bit gray
@@ -49,7 +50,7 @@ struct image {
   int width;
   int height;
   int maxval;   // maximum gray value (pixels with maxval are pure WHITE)
-  uint8_t* pixel; // pixel data (a raster scan)
+  uint8_t pixel; // pixel data (a raster scan)
 };
 
 
@@ -167,14 +168,15 @@ void ImageInit(void) { ///
 /// (The caller is responsible for destroying the returned image!)
 /// On failure, returns NULL and errno/errCause are set accordingly.
 Image ImageCreate(int width, int height, uint8 maxval) { ///
-  assert (width >= 0);
-  assert (height >= 0);
-  assert (0 < maxval && maxval <= PixMax);
+  assert(width >= 0);
+  assert(height >= 0);
+  assert(0 < maxval && maxval <= PixMax);
+
   // Insert your code here!
-  Image newImage = malloc(sizeof(Image));
-  newImage -> width = width;
-  newImage -> height = height;
-  newImage -> maxval = maxval;
+  Image newImage = (Image)malloc(sizeof(Image));
+  newImage->width = width;
+  newImage->height = height;
+  newImage->maxval = maxval;
 
   Image* newImage = malloc(sizeof(Image));
   if (newImage == NULL) { 
@@ -193,7 +195,6 @@ Image ImageCreate(int width, int height, uint8 maxval) { ///
   }
 
   return newImage;
-
 
 }
 
@@ -421,7 +422,7 @@ void ImageBrighten(Image img, double factor) { ///
 
 /// Rotate an image.
 /// Returns a rotated version of the image.
-/// The rotation is 90 degrees clockwise.
+/// The rotation is 90 degrees anti-clockwise.
 /// Ensures: The original img is not modified.
 /// 
 /// On success, a new image is returned.
