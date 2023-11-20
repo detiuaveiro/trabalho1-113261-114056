@@ -27,7 +27,6 @@
 #include "instrumentation.h"
 
 // The data structure
-//
 // An image is stored in a structure containing 3 fields:
 // Two integers store the image width and height.
 // The other field is a pointer to an array that stores the 8-bit gray
@@ -50,7 +49,7 @@ struct image {
   int width;
   int height;
   int maxval;   // maximum gray value (pixels with maxval are pure WHITE)
-  uint8* pixel; // pixel data (a raster scan)
+  uint8_t* pixel; // pixel data (a raster scan)
 };
 
 
@@ -178,8 +177,23 @@ Image ImageCreate(int width, int height, uint8 maxval) { ///
   newImage -> maxval = maxval;
 
   Image* newImage = malloc(sizeof(Image));
-  if (newImage == NULL) { return NULL;}
-  //FALTA PARTE
+  if (newImage == NULL) { 
+    return NULL;}
+
+  // Allocate memory for image data
+  newImage->pixel = malloc(width * height * sizeof(uint8_t));
+  if (newImage->pixel == NULL) {
+      free(newImage);
+      return NULL;
+    }
+    
+  // Initialize image data with black pixels (0)
+  for (int i = 0; i < width * height; i++) {
+      newImage->pixel[i] = 0;
+  }
+
+  return newImage;
+
 
 }
 
