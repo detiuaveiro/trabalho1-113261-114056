@@ -604,7 +604,40 @@ int ImageMatchSubImage(Image img1, int x, int y, Image img2) { ///
   assert (img2 != NULL);
   assert (ImageValidPos(img1, x, y));
   // Insert your code here!
+
+    for (int i = 0; i < img2->height; i++) {
+    for (int j = 0; j < img2->width; j++) {
+      int img1_index = (y + i) * img1->width + (x + j);
+      int img2_index = i * img2->width + j;
+      if (img1->pixel[img1_index] != img2->pixel[img2_index]) {
+        return 0;
+      }
+    }
+  }
+
+  return 1;
 }
+  
+  // Check if the subimage is completely inside the larger image
+  /*if (!ImageValidRect(img1, x, y, img2->width, img2->height)) {
+    return 0; // The subimage is not completely inside the larger image
+  }
+  
+  // Compare the pixels in the subimage and the corresponding region of the larger image
+  for (int j = 0; j < img2->height; j++) {
+    for (int i = 0; i < img2->width; i++) {
+      Pixel p1 = ImageGetPixel(img1, x + i, y + j);
+      Pixel p2 = ImageGetPixel(img2, i, j);
+      if (p1.r != p2.r || p1.g != p2.g || p1.b != p2.b) {
+        return 0; // The subimage does not match the corresponding region of the larger image
+      }
+    }
+  }
+  
+  return 1; // The subimage matches the corresponding region of the larger image
+}*/
+
+
 
 /// Locate a subimage inside another image.
 /// Searches for img2 inside img1.
@@ -614,6 +647,8 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
   assert (img1 != NULL);
   assert (img2 != NULL);
   // Insert your code here!
+
+  
 }
 
 
