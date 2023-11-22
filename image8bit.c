@@ -469,6 +469,21 @@ void ImageBrighten(Image img, double factor) { ///
 Image ImageRotate(Image img) { ///
   assert (img != NULL);
   // Insert your code here!
+  Image rotated_img = img;
+  rotated_img->width = img->height;
+  rotated_img->height = img->width;
+
+  // Reorganiza os dados do pixel
+  for (int i = 0; i < img->height; i++) {
+    for (int j = 0; j < img->width; j++) {
+      int index = i * img->width + j;
+      int rotated_index = img->width * (img->height - 1 - i) + (j - img->width + 1);
+      rotated_img->pixel[rotated_index] = img->pixel[index];
+      }
+  }
+
+  return rotated_img;
+
 }
 
 
@@ -562,6 +577,17 @@ Image ImageCrop(Image img, int x, int y, int w, int h) { ///
   assert (img != NULL);
   assert (ImageValidRect(img, x, y, w, h));
   // Insert your code here!
+  Image cropped_image = ImageCreate(w,h,img->maxval);
+  
+  for (int i = 0; i < h; i++ ){
+    for (int j = 0; j < w; j++){
+      int index = (y + i) * img->width + (x + j);
+      cropped_image->pixel[i * w + j] = img->pixel[index];
+    }
+  }
+
+  return cropped_image;
+
 }
 
 
