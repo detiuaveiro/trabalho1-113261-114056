@@ -345,9 +345,13 @@ int ImageValidPos(Image img, int x, int y) { ///
 }
 
 /// Check if rectangular area (x,y,w,h) is completely inside img.
+
 int ImageValidRect(Image img, int x, int y, int w, int h) { ///
-  assert (img != NULL);
+  assert (img != NULL); // Verificar se o ponteiro da imagem não é nulo
   // Insert your code here!
+
+  assert(img->width >= 0 && img->height >= 0); // Verificação básica da imagem
+  return (x >= 0 && y >= 0 && (x + w) <= img->width && (y + h) <= img->height); // Verificar se o retângulo está completamente dentro da imagem
 }
 
 /// Pixel get & set operations
