@@ -469,21 +469,17 @@ void ImageBrighten(Image img, double factor) { ///
 Image ImageRotate(Image img) { ///
   assert (img != NULL);
   // Insert your code here!
-  Image rotated_img = img;
-  rotated_img->width = img->height;
-  rotated_img->height = img->width;
+  Image rotated_img = ImageCreate(img->height,img->width,img->maxval);
 
   // Reorganiza os dados do pixel
   for (int i = 0; i < img->height; i++) {
-    for (int j = 0; j < img->width; j++) {
-      int index = i * img->width + j;
-      int rotated_index = img->width * (img->height - 1 - i) + (j - img->width + 1);
-      rotated_img->pixel[rotated_index] = img->pixel[index];
-      }
-  }
-
+        for (int j = 0; j < img->width; j++) {
+            int index = i * img->width + j;
+            int rotated_index = (img->width - j - 1) * rotated_img->width + i;
+            rotated_img->pixel[rotated_index] = img->pixel[index];
+        }
+    }
   return rotated_img;
-
 }
 
 
