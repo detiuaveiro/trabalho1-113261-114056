@@ -618,12 +618,11 @@ void ImageBlend(Image img1, int x, int y, Image img2, double alpha) { ///
   assert (img2 != NULL);
   assert (ImageValidRect(img1, x, y, img2->width, img2->height));
   // Insert your code here!
-  assert (alpha >=0.0 && alpha <= 1.0);
   for (int i = 0; i < img2 -> height; i++){
     for (int j = 0; j < img2->width; j++){
       int dst_index = (y+i) * img1 -> width + (x +j);
       int src_index = i * img2 -> width + j;
-      img1 -> pixel[dst_index]= (1 - alpha) * img1 -> pixel[dst_index] + alpha * img2 -> pixel[src_index];
+      int blended_value = (1 - alpha) * img1 -> pixel[dst_index] + alpha * img2 -> pixel[src_index];
     }
   }
 }
