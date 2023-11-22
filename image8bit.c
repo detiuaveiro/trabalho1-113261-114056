@@ -471,6 +471,8 @@ Image ImageRotate(Image img) { ///
   // Insert your code here!
 }
 
+
+
 /// Mirror an image = flip left-right.
 /// Returns a mirrored version of the image.
 /// Ensures: The original img is not modified.
@@ -478,10 +480,71 @@ Image ImageRotate(Image img) { ///
 /// On success, a new image is returned.
 /// (The caller is responsible for destroying the returned image!)
 /// On failure, returns NULL and errno/errCause are set accordingly.
+
+
+
 Image ImageMirror(Image img) { ///
   assert (img != NULL);
   // Insert your code here!
+  // Crie uma nova imagem com as mesmas dimensões que a imagem original
+  Image mirroredImg = ImageCreate(img->width, img->height, img->maxval);
+
+
+  if (mirroredImg->pixel == NULL) {
+      errno = ENOMEM;
+      perror("Erro na alocação de memoria");
+      return mirroredImg;
+  }
+
+  // Preencha a nova imagem com os pixels espelhados da imagem original
+  for (int y = 0; y < img->height; y++) {
+    for (int x = 0; x < img->width; x++) {
+      mirroredImg->pixel[y * img->width + (img->width - x - 1)] = img->pixel[y * img->width + x];
+    }
+  }
+
+  return mirroredImg;
 }
+
+
+
+
+
+
+/*
+  assert(img->width >= 0 && img->height >= 0); // Verificação básica da imagem
+  Image mirroredImg; // Imagem espelhada a ser retornada
+
+  // Alocar memória para a nova imagem espelhada
+  mirroredImg->width = img->width;
+  mirroredImg->height = img->height;
+  // Supondo que a estrutura Image tenha algum tipo de matriz de pixels
+  mirroredImg->pixel = malloc(img->width * img->height * sizeof(uint8)); 
+
+  if (mirroredImg->pixel == NULL) {
+      //perror("Erro na alocação de memoria");
+      // Falha na alocação de memória
+      errno = ENOMEM; // Definir erro de falta de memória
+      perror("Erro na alocação de memoria");
+      return NULL;
+  }
+
+  // Copiar os pixels da imagem original invertendo horizontalmente
+  for (int y = 0; y < img->height; y++) {
+      for (int x = 0; x < img->width; x++) {
+          // Inverter horizontalmente os pixels
+          mirroredImg->pixel[y * img->width + (img->width - x - 1)] = img->pixel[y * img->width + x];
+      }
+    
+
+    return mirroredImg; // Retornar a imagem espelhada
+}
+}*/
+
+
+
+
+
 
 /// Crop a rectangular subimage from img.
 /// The rectangle is specified by the top left corner coords (x, y) and
