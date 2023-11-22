@@ -25,6 +25,8 @@
 #include <stdlib.h>
 #include "instrumentation.h"
 
+#include <string.h>
+
 // The data structure
 //
 // An image is stored in a structure containing 3 fields:
@@ -672,5 +674,57 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
 /// The image is changed in-place.
 void ImageBlur(Image img, int dx, int dy) { ///
   // Insert your code here!
+  //void ImageBlur(Image img, int dx, int dy) {
+//void ImageBlur(Image img, int dx, int dy) {
+  assert(img->width >= 0 && img->height >= 0);
+
+  Image original = ImageCopy(img);
+
+  for (int y = 0; y < img->height; y++) {
+    for (int x = 0; x < img->width; x++) {
+      long long sum = 0;
+      int count = 0;
+
+      for (int i = -dy; i <= dy; i++) {
+        for (int j = -dx; j <= dx; j++) {
+          int neighbor_x = x + j;
+          int neighbor_y = y + i;
+
+          if (neighbor_x >= 0 && neighbor_x < img->width &&
+              neighbor_y >= 0 && neighbor_y < img->height) {
+            sum += original->pixel[neighbor_y * img->width + neighbor_x];
+            count++;
+          }
+        }
+      }
+
+      if (count > 0) {
+        img->pixel[y * img->width + x] = (sum + count / 2) / count;
+      }
+    }
+  }
+
+  ImageDestroy(original);
 }
+
+
+Image ImageCopy(Image img) {
+  // Allocate memory for the new image
+  Image newImg = malloc(sizeof(*newImg));
+
+  // Copy the width and height
+  newImg->width = img->width;
+  newImg->height = img->height;
+
+  // Allocate memory for the pixel data
+  newImg->pixel = malloc(img->width * img->height * sizeof(*(newImg->pixel)));
+
+  // Copy the pixel data
+  memcpy(newImg->pixel, img->pixel, img->width * img->height * sizeof(*(newImg->pixel)));
+
+  return newImg;
+}
+
+
+
 
