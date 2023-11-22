@@ -466,6 +466,8 @@ void ImageBrighten(Image img, double factor) { ///
 /// On success, a new image is returned.
 /// (The caller is responsible for destroying the returned image!)
 /// On failure, returns NULL and errno/errCause are set accordingly.
+
+
 Image ImageRotate(Image img) { ///
   assert (img != NULL);
   // Insert your code here!
@@ -516,42 +518,6 @@ Image ImageMirror(Image img) { ///
 
   return mirroredImg;
 }
-
-
-
-
-
-
-/*
-  assert(img->width >= 0 && img->height >= 0); // Verificação básica da imagem
-  Image mirroredImg; // Imagem espelhada a ser retornada
-
-  // Alocar memória para a nova imagem espelhada
-  mirroredImg->width = img->width;
-  mirroredImg->height = img->height;
-  // Supondo que a estrutura Image tenha algum tipo de matriz de pixels
-  mirroredImg->pixel = malloc(img->width * img->height * sizeof(uint8)); 
-
-  if (mirroredImg->pixel == NULL) {
-      //perror("Erro na alocação de memoria");
-      // Falha na alocação de memória
-      errno = ENOMEM; // Definir erro de falta de memória
-      perror("Erro na alocação de memoria");
-      return NULL;
-  }
-
-  // Copiar os pixels da imagem original invertendo horizontalmente
-  for (int y = 0; y < img->height; y++) {
-      for (int x = 0; x < img->width; x++) {
-          // Inverter horizontalmente os pixels
-          mirroredImg->pixel[y * img->width + (img->width - x - 1)] = img->pixel[y * img->width + x];
-      }
-    
-
-    return mirroredImg; // Retornar a imagem espelhada
-}
-}*/
-
 
 
 
@@ -622,7 +588,10 @@ void ImageBlend(Image img1, int x, int y, Image img2, double alpha) { ///
     for (int j = 0; j < img2->width; j++){
       int dst_index = (y+i) * img1 -> width + (x +j);
       int src_index = i * img2 -> width + j;
-      int blended_value = (1 - alpha) * img1 -> pixel[dst_index] + alpha * img2 -> pixel[src_index];
+      //int blended_value = (1 - alpha) * img1 -> pixel[dst_index] + alpha * img2 -> pixel[src_index];
+      double blended_value = (1-alpha)*img1->pixel[dst_index]+alpha*img2->pixel[src_index];
+      img1 -> pixel[dst_index] = (int)(blended_value + 0.5);
+  
     }
   }
 }
