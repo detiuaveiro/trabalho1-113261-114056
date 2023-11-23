@@ -23,6 +23,7 @@
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include "instrumentation.h"
 
 #include <string.h>
@@ -665,6 +666,13 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
 
 
 
+Image ImageCopy(Image img) {
+  // Allocate memory for the new image
+  
+  return ImageCreate(img->width, img->height, img->maxval);
+
+}
+
 
 /// Filtering
 
@@ -673,12 +681,39 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
 /// [x-dx, x+dx]x[y-dy, y+dy].
 /// The image is changed in-place.
 void ImageBlur(Image img, int dx, int dy) { ///
+  assert (img != NULL);
   // Insert your code here!
-  //void ImageBlur(Image img, int dx, int dy) {
-//void ImageBlur(Image img, int dx, int dy) {
+
+ /* int width = img->width;
+  int height = img->height;
+
+  Image temp = createImage(width, height); // create a temporary image to store the blurred result
+  for (int y = 0; y < height; y++) {
+    for (int x = 0; x < width; x++) {
+      float sum = 0;
+      int count = 0;
+      for (int j = y - dy; j <= y + dy; j++) {
+        if (j < 0 || j >= height) continue;
+        for (int i = x - dx; i <= x + dx; i++) {
+          if (i < 0 || i >= width) continue;
+          sum += img->pixel[j * width + i];
+          count++;
+        }
+      }
+      temp->pixel[y * width + x] = sum / count; // compute the mean and store it in the temporary image
+    }
+  }
+  memcpy(img->pixel, temp->pixel, width * height * sizeof(float)); // copy the blurred result back to the original image
+  freeImage(temp); // free the temporary image
+}
+
+void freeImage(Image img) {
+    free(img->pixel);
+}*/ 
+  //BLUR 1 
   assert(img->width >= 0 && img->height >= 0);
 
-  Image original = ImageCopy(img);
+  Image copia = ImageCopy(img);
 
   for (int y = 0; y < img->height; y++) {
     for (int x = 0; x < img->width; x++) {
@@ -692,38 +727,21 @@ void ImageBlur(Image img, int dx, int dy) { ///
 
           if (neighbor_x >= 0 && neighbor_x < img->width &&
               neighbor_y >= 0 && neighbor_y < img->height) {
-            sum += original->pixel[neighbor_y * img->width + neighbor_x];
+            sum += ImageGetPixel(img, neighbor_x, neighbor_y);
             count++;
           }
         }
       }
 
-      if (count > 0) {
-        img->pixel[y * img->width + x] = (sum + count / 2) / count;
-      }
+      img->pixel[y * img->width + x] = round((double)sum / count);
     }
   }
-
-  ImageDestroy(original);
+  
+  ImageDestroy(&copia);
 }
 
 
-Image ImageCopy(Image img) {
-  // Allocate memory for the new image
-  Image newImg = malloc(sizeof(*newImg));
 
-  // Copy the width and height
-  newImg->width = img->width;
-  newImg->height = img->height;
-
-  // Allocate memory for the pixel data
-  newImg->pixel = malloc(img->width * img->height * sizeof(*(newImg->pixel)));
-
-  // Copy the pixel data
-  memcpy(newImg->pixel, img->pixel, img->width * img->height * sizeof(*(newImg->pixel)));
-
-  return newImg;
-}
 
 
 
