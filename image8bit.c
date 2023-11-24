@@ -182,18 +182,26 @@ Image ImageCreate(int width, int height, uint8 maxval) {
     return NULL;
   }
 
-  // Define a largura, altura e valor máximo de uma nova imagem
-  newImage->width = width;
-  newImage->height = height;
-  newImage->maxval = maxval;
-
-  // Aloca memória para os dados da imagem
   newImage->pixel = (uint8 *)calloc(width * height, sizeof(uint8));
   if (newImage->pixel == NULL) {
     // Liberta a memória alocada
     free(newImage);
     return NULL;
   }
+
+  // Define a largura, altura e valor máximo de uma nova imagem
+  newImage->width = width;
+  newImage->height = height;
+  newImage->maxval = maxval;
+
+  // Aloca memória para os dados da imagem
+  
+  /*newImage->pixel = (uint8 *)calloc(width * height, sizeof(uint8));
+  if (newImage->pixel == NULL) {
+    // Liberta a memória alocada
+    free(newImage);
+    return NULL;
+  }*/ 
   // Retorna a nova imagem
   return newImage;
 
@@ -701,8 +709,46 @@ void ImageBlur(Image img, int dx, int dy) { ///
   assert (img != NULL);
   // Insert your code here!
 
+  //BLUR 1 
+  assert(img->width >= 0 && img->height >= 0);
 
 
+  int width = img->width;
+  int height = img->height;
+  Image copia = ImageCreate(width,height,ImageMaxval(img));
+
+  if (copia == NULL) {
+    return;
+  }
+
+  for (int y = 0; y < img->height; y++) {
+    for (int x = 0; x < img->width; x++) {
+      long sum = 0;
+      int count = 0;
+
+      for (int i = -dy; i <= dy; i++) {
+        for (int j = -dx; j <= dx; j++) {
+
+          int next_x = x + j;
+          int next_y = y + i;
+
+          if (ImageValidPos(img,next_x,next_y)) {
+            sum += ImageGetPixel(img, next_x, next_y);
+            count++;
+          }
+        }
+      }
+      uint8 Value = (uint8)((double)sum / count + 0.5);
+      ImageSetPixel(copia, x,y,Value);
+    }
+  }
+  for (int index = 0; index < height * width; index++){
+    img->pixel[index] = copia->pixel[index];
+  }
+  ImageDestroy(&copia);
+}
+
+/*
 //Blur 2
   int width = img->width;
   int height = img->height;
@@ -721,6 +767,7 @@ void ImageBlur(Image img, int dx, int dy) { ///
             continue;
           if (j >= 0 && j < height && i >= 0 && i < width) {
           sum += img->pixel[j * width + i];
+          sum += ImageGetPixel(img, j, i);
 }
           //sum += img->pixel[j * width + i];
           count++;
@@ -734,6 +781,8 @@ void ImageBlur(Image img, int dx, int dy) { ///
   //freeImage(temp); // free the temporary image
 }
 
+
+*/
 
 
   //BLUR 1 
