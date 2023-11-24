@@ -609,37 +609,17 @@ int ImageMatchSubImage(Image img1, int x, int y, Image img2) { ///
   // Insert your code here!
 
     for (int i = 0; i < img2->height; i++) {
-    for (int j = 0; j < img2->width; j++) {
-      int img1_index = (y + i) * img1->width + (x + j);
-      int img2_index = i * img2->width + j;
-      if (img1->pixel[img1_index] != img2->pixel[img2_index]) {
-        return 0;
+      for (int j = 0; j < img2->width; j++) {
+        int img1_index = (y + i) * img1->width + (x + j);
+        int img2_index = i * img2->width + j;
+        if (img1->pixel[img1_index] != img2->pixel[img2_index]) {
+          return 0;
+        }
       }
-    }
   }
 
   return 1;
 }
-  
-  // Check if the subimage is completely inside the larger image
-  /*if (!ImageValidRect(img1, x, y, img2->width, img2->height)) {
-    return 0; // The subimage is not completely inside the larger image
-  }
-  
-  // Compare the pixels in the subimage and the corresponding region of the larger image
-  for (int j = 0; j < img2->height; j++) {
-    for (int i = 0; i < img2->width; i++) {
-      Pixel p1 = ImageGetPixel(img1, x + i, y + j);
-      Pixel p2 = ImageGetPixel(img2, i, j);
-      if (p1.r != p2.r || p1.g != p2.g || p1.b != p2.b) {
-        return 0; // The subimage does not match the corresponding region of the larger image
-      }
-    }
-  }
-  
-  return 1; // The subimage matches the corresponding region of the larger image
-}*/
-
 
 
 /// Locate a subimage inside another image.
@@ -675,7 +655,6 @@ Image ImageCopy(Image img) {
 
 
 /// Filtering
-
 /// Blur an image by a applying a (2dx+1)x(2dy+1) mean filter.
 /// Each pixel is substituted by the mean of the pixels in the rectangle
 /// [x-dx, x+dx]x[y-dy, y+dy].
@@ -684,50 +663,58 @@ void ImageBlur(Image img, int dx, int dy) { ///
   assert (img != NULL);
   // Insert your code here!
 
- /* int width = img->width;
-  int height = img->height;
 
-  Image temp = createImage(width, height); // create a temporary image to store the blurred result
+
+//Blur 2
+  int width = img->width;
+  int height = img->height;
+  int maxval = 255; // Assuming maxval is 255, you can change it to the appropriate value
+
+  Image temp = ImageCreate(width, height, maxval); // create a temporary image to store the blurred result
   for (int y = 0; y < height; y++) {
     for (int x = 0; x < width; x++) {
       float sum = 0;
       int count = 0;
       for (int j = y - dy; j <= y + dy; j++) {
-        if (j < 0 || j >= height) continue;
+        if (j < 0 || j >= height) 
+          continue;
         for (int i = x - dx; i <= x + dx; i++) {
-          if (i < 0 || i >= width) continue;
+          if (i < 0 || i >= width) 
+            continue;
+          if (j >= 0 && j < height && i >= 0 && i < width) {
           sum += img->pixel[j * width + i];
+}
+          //sum += img->pixel[j * width + i];
           count++;
         }
       }
-      temp->pixel[y * width + x] = sum / count; // compute the mean and store it in the temporary image
+      temp->pixel[y * width + x] =  round((double)sum / count); // compute the mean and store it in the temporary image
     }
   }
-  memcpy(img->pixel, temp->pixel, width * height * sizeof(float)); // copy the blurred result back to the original image
-  freeImage(temp); // free the temporary image
+  //memcpy(img->pixel, temp->pixel, width * height * sizeof(float)); // copy the blurred result back to the original image
+  ImageDestroy(temp);
+  //freeImage(temp); // free the temporary image
 }
 
-void freeImage(Image img) {
-    free(img->pixel);
-}*/ 
+
+
   //BLUR 1 
-  assert(img->width >= 0 && img->height >= 0);
+  /*assert(img->width >= 0 && img->height >= 0);
 
   Image copia = ImageCopy(img);
 
   for (int y = 0; y < img->height; y++) {
     for (int x = 0; x < img->width; x++) {
-      long long sum = 0;
+      long sum = 0;
       int count = 0;
 
       for (int i = -dy; i <= dy; i++) {
         for (int j = -dx; j <= dx; j++) {
-          int neighbor_x = x + j;
-          int neighbor_y = y + i;
+          int next_x = x + j;
+          int next_y = y + i;
 
-          if (neighbor_x >= 0 && neighbor_x < img->width &&
-              neighbor_y >= 0 && neighbor_y < img->height) {
-            sum += ImageGetPixel(img, neighbor_x, neighbor_y);
+          if (next_x >= 0 && next_x < img->width && next_y >= 0 && next_y < img->height) {
+            sum += ImageGetPixel(img, next_x, next_y);
             count++;
           }
         }
@@ -736,10 +723,9 @@ void freeImage(Image img) {
       img->pixel[y * img->width + x] = round((double)sum / count);
     }
   }
-  
   ImageDestroy(&copia);
 }
-
+*/
 
 
 
