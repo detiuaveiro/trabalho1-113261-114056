@@ -170,35 +170,35 @@ void ImageInit(void) { ///
 /// (The caller is responsible for destroying the returned image!)
 /// On failure, returns NULL and errno/errCause are set accordingly.
 Image ImageCreate(int width, int height, uint8 maxval) {
+  // Verificação da largura e da altura
   assert(width >= 0);
   assert(height >= 0);
+  // Verifica se o valor máximo está dentro do intervalo permitido
   assert(0 < maxval && maxval <= PixMax);
 
-  // Allocate memory for the Image struct
+  // Aloca memória para a estrutura da imagem
   Image newImage = (Image)malloc(sizeof(struct image));
   if (newImage == NULL) { 
     return NULL;
   }
 
+  // Define a largura, altura e valor máximo de uma nova imagem
   newImage->width = width;
   newImage->height = height;
   newImage->maxval = maxval;
 
-  // Allocate memory for image data
+  // Aloca memória para os dados da imagem
   newImage->pixel = (uint8 *)calloc(width * height, sizeof(uint8));
   if (newImage->pixel == NULL) {
+    // Liberta a memória alocada
     free(newImage);
     return NULL;
   }
-
+  // Retorna a nova imagem
   return newImage;
-  if (newImage->pixel == NULL) {
-      free(newImage);
-      return NULL;
-  }
 
-  return newImage;
 }
+
 
 /// Destroy the image pointed to by (*imgp).
 ///   imgp : address of an Image variable.
@@ -210,9 +210,9 @@ void ImageDestroy(Image* imgp) { ///
   // Insert your code here!
 
   if (*imgp != NULL){
-    free((*imgp)->pixel); //Liberta memória alocada para os píxeis
-    free((*imgp));  //Liberta a memória allocada para Image struct
-    *imgp = NULL;   // Define NULL para o ponteiro
+    free((*imgp)->pixel); //Irá libertar a memória alocada para os píxeis
+    free((*imgp));        //Irá libertar a memória alocada para Image struct
+    *imgp = NULL;         // Define NULL para o ponteiro
   }
 }
 
@@ -239,7 +239,7 @@ static int skipComments(FILE* f) {
 /// On success, a new image is returned.
 /// (The caller is responsible for destroying the returned image!)
 /// On failure, returns NULL and errno/errCause are set accordingly.
-Image ImageLoad(const char* filename) { ///
+Image ImageLoad(const char* filename) { 
   int w, h;
   int maxval;
   char c;
@@ -370,11 +370,19 @@ int ImageValidRect(Image img, int x, int y, int w, int h) { ///
 static inline int G(Image img, int x, int y) {
   int index;
   // Insert your code here!
+
+  // Verificação das coordenadas de imagem
   assert (0 <= x && x < img->width);
   assert (0 <= y && y < img->height);
 
+
+  // Calcula o índice do pixel, segundo as coordenadas (x, y) 
   index = y * img->width + x;
+
+  // Verifica os valores de índice calculado
   assert (0 <= index && index < img->width * img->height);
+
+  // Retorno de indice
   return index;
 }
 
