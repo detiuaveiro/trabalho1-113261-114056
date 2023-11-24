@@ -7,17 +7,17 @@
 /// Use as follows:
 ///
 /// // Name the counters you're going to use: 
-/// InstrName[0] = "memops";
-/// InstrName[1] = "adds";
-/// InstrCalibrate();  // Call once, to measure CTU
+//InstrName[0] = "memops";
+//InstrName[1] = "adds";
+//InstrCalibrate();  // Call once, to measure CTU
 /// ...
-/// InstrReset();  // reset to zero
-/// for (...) {
-///   InstrCount[0] += 3;  // to count array acesses
-///   InstrCount[1] += 1;  // to count addition
-///   a[k] = a[i] + a[j];
-/// }
-/// InstrPrint();  // to show time and counters
+//InstrReset();  // reset to zero
+//for (...) {
+    //InstrCount[0] += 3;  // to count array acesses
+    //InstrCount[1] += 1;  // to count addition
+    //a[k] = a[i] + a[j];
+ //}
+//InstrPrint();  // to show time and counters
 
 #ifndef INSTRUMENTATION_H
 #define INSTRUMENTATION_H

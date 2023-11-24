@@ -149,6 +149,8 @@ void ImageInit(void) { ///
   InstrCalibrate();
   InstrName[0] = "pixmem";  // InstrCount[0] will count pixel array acesses
   // Name other counters here...
+  InstrName[1] = "adds";
+  InstrCalibrate();
   
 }
 
@@ -156,7 +158,14 @@ void ImageInit(void) { ///
 #define PIXMEM InstrCount[0]
 // Add more macros here...
 
+#define ADDS   InstrCount[1]
+
 // TIP: Search for PIXMEM or InstrCount to see where it is incremented!
+
+
+
+
+
 
 
 /// Image management functions
@@ -631,18 +640,26 @@ void ImagePaste(Image img1, int x, int y, Image img2) { ///
 void ImageBlend(Image img1, int x, int y, Image img2, double alpha) { ///
   assert (img1 != NULL);
   assert (img2 != NULL);
+
   assert (ImageValidRect(img1, x, y, img2->width, img2->height));
   // Insert your code here!
+  InstrReset() ;
+
   for (int i = 0; i < img2 -> height; i++){
     for (int j = 0; j < img2->width; j++){
+      InstrCount[0] += 3;  // to count array acesses
+      InstrCount[1] += 1;  // to count addition
       int dst_index = (y+i) * img1 -> width + (x +j);
       int src_index = i * img2 -> width + j;
       //int blended_value = (1 - alpha) * img1 -> pixel[dst_index] + alpha * img2 -> pixel[src_index];
       double blended_value = (1-alpha)*img1->pixel[dst_index]+alpha*img2->pixel[src_index];
       img1 -> pixel[dst_index] = (int)(blended_value + 0.5);
-  
+      //InstrCount[0] += 3;  // to count array acesses
+    //InstrCount[1] += 1;  // to count addition
+      //a[k] = a[i] + a[j];
     }
   }
+  InstrPrint();
 }
 
 /// Compare an image to a subimage of a larger image.
@@ -711,7 +728,7 @@ void ImageBlur(Image img, int dx, int dy) { ///
 
   //BLUR 1 
   assert(img->width >= 0 && img->height >= 0);
-
+  InstrReset();
 
   int width = img->width;
   int height = img->height;
@@ -734,6 +751,8 @@ void ImageBlur(Image img, int dx, int dy) { ///
 
           if (ImageValidPos(img,next_x,next_y)) {
             sum += ImageGetPixel(img, next_x, next_y);
+            InstrCount[0] += 3;  // to count array acesses
+            InstrCount[1] += 1;  // to count addition
             count++;
           }
         }
@@ -746,6 +765,7 @@ void ImageBlur(Image img, int dx, int dy) { ///
     img->pixel[index] = copia->pixel[index];
   }
   ImageDestroy(&copia);
+  InstrPrint();
 }
 
 /*
