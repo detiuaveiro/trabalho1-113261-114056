@@ -326,16 +326,31 @@ int ImageMaxval(Image img) { ///
 void ImageStats(Image img, uint8* min, uint8* max) { ///
   assert (img != NULL);
   // Insert your code here!
-  uint8_t current_pixel;
-  *min = img->pixel[0];
-  *max = img->pixel[0];
+
+
+  // Inicialização das variáveis a armazenar
+  uint8_t current_pixel;    // Val do pixel atual
+  *min = img->pixel[0];     //Val mínimo com o primeiro pixel
+  *max = img->pixel[0];     //Val mínimo para o primeiro pixel
+
+
+
 
   for (int i = 0; i < img->height; i++){
     for (int j = 0; j < img->width; j++){
-        current_pixel =img->pixel[i * img -> width + j];  
+        current_pixel =img->pixel[i * img -> width + j];   // Val do pixel atual
 
-        if (current_pixel < *min){ *min = current_pixel; }
-        if (current_pixel > *max){ *max = current_pixel; } 
+
+
+        // Verificação se o pixel atual é menor que o valor mínimo encontrado até ao momentoo
+        if (current_pixel < *min){ 
+          *min = current_pixel;   // Se sim, atualiza o valor 
+          } 
+
+        // Verificação se o pixel atual é maior que o valor máximo encontrado até ao momentoo
+        if (current_pixel > *max){ 
+          *max = current_pixel; // Se sim, atualiza o valor 
+          } 
     }
   }
 
@@ -420,7 +435,11 @@ void ImageSetPixel(Image img, int x, int y, uint8 level) { ///
 void ImageNegative(Image img) { ///
   assert (img != NULL);
   // Insert your code here!
-  for (int i = 0; i < img->width * img->height; i++){
+
+
+  for (int i = 0; i < img->width * img->height; i++){ 
+    // ao percorrer todos os pixeis de uma imagem
+    // é feito o calculo do negativo de cada pixel na imagem
     img->pixel[i]= PixMax - img->pixel[i];
   }
 }
@@ -428,17 +447,22 @@ void ImageNegative(Image img) { ///
 /// Apply threshold to image.
 /// Transform all pixels with level<thr to black (0) and
 /// all pixels with level>=thr to white (maxval).
-void ImageThreshold(Image img, uint8 thr) { ///
+void ImageThreshold(Image img, uint8 thr) { 
   assert (img != NULL);
   // Insert your code here!
-  for (int i = 0; i<img->width * img->height;i++){
-    if (img->pixel[i]<thr){
-      img->pixel[i]=0;
+
+
+  for (int i = 0; i<img->width * img->height;i++){  //percorrendo todos os pixeis da imagem
+
+
+    if (img->pixel[i]<thr){   // verifica se o valor de pixel é inferior que o limite 
+      img->pixel[i]=0;        // se sim, este fica definido a 0 == fica a preto
     } else {
-      img->pixel[i]=img->maxval;
+      img->pixel[i]=img->maxval;  // caso contário, fica definido para o valor máximo, ou sej,a fica a branco
     }
   }
 }
+
 
 /// Brighten image by a factor.
 /// Multiply each pixel level by a factor, but saturate at maxval.
@@ -448,10 +472,16 @@ void ImageBrighten(Image img, double factor) { ///
   assert (img != NULL);
   // ? assert (factor >= 0.0);
   // Insert your code here!
-  assert (factor >=0.0);
-  for (int i = 0; i < img->width * img->height; i++){
-    int new_value = (int)(img->pixel[i] * factor+0.5);
-    img->pixel[i] = (new_value > img->maxval) ? img->maxval : new_value;
+
+  assert (factor >=0.0);    // verificação dos valores do fator 
+
+  for (int i = 0; i < img->width * img->height; i++){ 
+    // Para todos os pixeis é calculado um novo valor do pixel, com base no fator 
+    
+    int new_value = (int)(img->pixel[i] * factor+0.5); 
+
+    // Atualização do novo valor do pixel na imagem
+    img->pixel[i] = (new_value > img->maxval) ? img->maxval : new_value; // Se o novo valor for maior que o valor máximo permitido, ajusta para o valor máximo
   }
 }
 
