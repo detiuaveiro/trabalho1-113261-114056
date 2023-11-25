@@ -150,7 +150,9 @@ void ImageInit(void) { ///
   InstrName[0] = "pixmem";  // InstrCount[0] will count pixel array acesses
   // Name other counters here...
   InstrName[1] = "adds";
-  InstrCalibrate();
+
+  InstrName[2]=  "comps";
+
   
 }
 
@@ -159,6 +161,8 @@ void ImageInit(void) { ///
 // Add more macros here...
 
 #define ADDS   InstrCount[1]
+
+#define COMPS   InstrCount[2]
 
 // TIP: Search for PIXMEM or InstrCount to see where it is incremented!
 
@@ -676,6 +680,7 @@ int ImageMatchSubImage(Image img1, int x, int y, Image img2) { ///
         int img1_index = (y + i) * img1->width + (x + j);
         int img2_index = i * img2->width + j;
         if (img1->pixel[img1_index] != img2->pixel[img2_index]) {
+          COMPS++;
           return 0;
         }
       }
@@ -694,6 +699,8 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
   assert (img2 != NULL);
   // Insert your code here!
 
+  InstrReset() ;
+
   for (int y = 0; y <= img1->height - img2->height; y++) {
     for (int x = 0; x <= img1->width - img2->width; x++) {
       if (ImageMatchSubImage(img1, x, y, img2)) {
@@ -704,6 +711,7 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
     }
   }
 
+  InstrPrint();
   return 0;
 }
 
@@ -722,9 +730,11 @@ Image ImageCopy(Image img) {
 /// Each pixel is substituted by the mean of the pixels in the rectangle
 /// [x-dx, x+dx]x[y-dy, y+dy].
 /// The image is changed in-place.
+
 void ImageBlur(Image img, int dx, int dy) { ///
   assert (img != NULL);
   // Insert your code here!
+
 
   //BLUR 1 
   assert(img->width >= 0 && img->height >= 0);
@@ -750,6 +760,9 @@ void ImageBlur(Image img, int dx, int dy) { ///
           int next_y = y + i;
 
           if (ImageValidPos(img,next_x,next_y)) {
+
+            COMPS += 2;
+
             sum += ImageGetPixel(img, next_x, next_y);
             InstrCount[0] += 3;  // to count array acesses
             InstrCount[1] += 1;  // to count addition

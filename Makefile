@@ -72,7 +72,7 @@ test8: $(PROGS) setup
 	cmp blend.pgm test/blend.pgm
 
 test9: $(PROGS) setup
-	./imageTool test/original.pgm blur 7,7 save blur.pgm
+	./imageTool pgm/large/ireland_03_1600x1200.pgm blur 7,7 save blur.pgm
 	cmp blur.pgm test/blur.pgm
 
 .PHONY: tests
