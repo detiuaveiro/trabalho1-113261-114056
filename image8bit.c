@@ -760,9 +760,7 @@ void ImageBlur(Image img, int dx, int dy) { ///
           int next_y = y + i;
 
           if (ImageValidPos(img,next_x,next_y)) {
-
             COMPS += 2;
-
             sum += ImageGetPixel(img, next_x, next_y);
             InstrCount[0] += 3;  // to count array acesses
             InstrCount[1] += 1;  // to count addition
