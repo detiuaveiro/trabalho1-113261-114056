@@ -742,7 +742,7 @@ void ImageBlur(Image img, int dx, int dy) { ///
 
 
 //BLUR 1 
- /* assert(img->width >= 0 && img->height >= 0);
+ assert(img->width >= 0 && img->height >= 0);
   
 
   int width = img->width;
@@ -782,13 +782,13 @@ void ImageBlur(Image img, int dx, int dy) { ///
     img->pixel[index] = copia->pixel[index];
   }
   ImageDestroy(&copia);
-}*/
+}
 
 
 
 //Blur 2
 
-int width = ImageWidth(img);
+/*int width = ImageWidth(img);
 int height = ImageHeight(img);
 
 // Aloca memória para a imagem integral
@@ -834,7 +834,7 @@ for (int y = 0; y < height; y++) {
 }
 
 // Libera a memória alocada para a imagem integral
-free(sum);
+free(sum);*/
 }
 
 
