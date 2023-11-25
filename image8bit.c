@@ -835,7 +835,6 @@ for (int y = 0; y < height; y++) {
 
 // Libera a memória alocada para a imagem integral
 free(sum);*/
-}
 
 
 
