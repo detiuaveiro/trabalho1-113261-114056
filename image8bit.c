@@ -152,6 +152,9 @@ void ImageInit(void) { ///
   InstrName[1] = "adds";
 
   InstrName[2]=  "comps";
+  InstrName[3]=  "muls";
+  InstrName[4]= "sum";
+
 
   
 }
@@ -169,6 +172,8 @@ void ImageInit(void) { ///
 
 
 
+#define max(a,b) ((a) > (b) ? (a) : (b))
+#define min(a,b) ((a) < (b) ? (a) : (b))
 
 
 
@@ -736,9 +741,9 @@ void ImageBlur(Image img, int dx, int dy) { ///
   // Insert your code here!
 
 
-  //BLUR 1 
-  assert(img->width >= 0 && img->height >= 0);
-  InstrReset();
+//BLUR 1 
+ /* assert(img->width >= 0 && img->height >= 0);
+  
 
   int width = img->width;
   int height = img->height;
@@ -760,14 +765,15 @@ void ImageBlur(Image img, int dx, int dy) { ///
           int next_y = y + i;
 
           if (ImageValidPos(img,next_x,next_y)) {
-            COMPS += 2;
+            SUM += 2;
             sum += ImageGetPixel(img, next_x, next_y);
             InstrCount[0] += 3;  // to count array acesses
-            InstrCount[1] += 1;  // to count addition
+            InstrCount[1] += 2;  // to count addition
             count++;
           }
         }
       }
+      MULT++;
       uint8 Value = (uint8)((double)sum / count + 0.5);
       ImageSetPixel(copia, x,y,Value);
     }
@@ -776,74 +782,60 @@ void ImageBlur(Image img, int dx, int dy) { ///
     img->pixel[index] = copia->pixel[index];
   }
   ImageDestroy(&copia);
-  InstrPrint();
-}
+}*/
 
-/*
+
+
 //Blur 2
-  int width = img->width;
-  int height = img->height;
-  int maxval = 255; // Assuming maxval is 255, you can change it to the appropriate value
 
-  Image temp = ImageCreate(width, height, maxval); // create a temporary image to store the blurred result
-  for (int y = 0; y < height; y++) {
+int width = ImageWidth(img);
+int height = ImageHeight(img);
+
+// Aloca memória para a imagem integral
+int* sum = (int*)malloc(width * height * sizeof(int));
+
+// Calcula a imagem integral em duas passagens
+for (int y = 0; y < height; y++) {
     for (int x = 0; x < width; x++) {
-      float sum = 0;
-      int count = 0;
-      for (int j = y - dy; j <= y + dy; j++) {
-        if (j < 0 || j >= height) 
-          continue;
-        for (int i = x - dx; i <= x + dx; i++) {
-          if (i < 0 || i >= width) 
-            continue;
-          if (j >= 0 && j < height && i >= 0 && i < width) {
-          sum += img->pixel[j * width + i];
-          sum += ImageGetPixel(img, j, i);
-}
-          //sum += img->pixel[j * width + i];
-          count++;
-        }
-      }
-      temp->pixel[y * width + x] =  round((double)sum / count); // compute the mean and store it in the temporary image
+        sum[y*width + x] = ImageGetPixel(img, x, y);
+        SUM++;
+        if (x > 0) sum[y*width + x] += sum[y*width + x - 1];
     }
-  }
-  //memcpy(img->pixel, temp->pixel, width * height * sizeof(float)); // copy the blurred result back to the original image
-  ImageDestroy(temp);
-  //freeImage(temp); // free the temporary image
 }
-
-
-*/
-
-
-  //BLUR 1 
-  /*assert(img->width >= 0 && img->height >= 0);
-
-  Image copia = ImageCopy(img);
-
-  for (int y = 0; y < img->height; y++) {
-    for (int x = 0; x < img->width; x++) {
-      long sum = 0;
-      int count = 0;
-
-      for (int i = -dy; i <= dy; i++) {
-        for (int j = -dx; j <= dx; j++) {
-          int next_x = x + j;
-          int next_y = y + i;
-
-          if (next_x >= 0 && next_x < img->width && next_y >= 0 && next_y < img->height) {
-            sum += ImageGetPixel(img, next_x, next_y);
-            count++;
-          }
-        }
-      }
-
-      img->pixel[y * img->width + x] = round((double)sum / count);
+for (int x = 0; x < width; x++) {
+    for (int y = 1; y < height; y++) {
+        SUM++;
+        sum[y*width + x] += sum[(y-1)*width + x];
     }
-  }
-  ImageDestroy(&copia);
 }
-*/
+
+// Aplica o filtro de média usando a imagem integral
+for (int y = 0; y < height; y++) {
+    for (int x = 0; x < width; x++) {
+        int x1 = max(0, x - dx);
+        int x2 = min(width - 1, x + dx);
+        int y1 = max(0, y - dy);
+        int y2 = min(height - 1, y + dy);
+        int sumPixel = sum[y2*width + x2];
+        if (x1 > 0){ 
+          SUM++;
+          sumPixel -= sum[y2*width + x1 - 1];}
+        if (y1 > 0) {
+          SUM++;
+          sumPixel -= sum[(y1-1)*width + x2];}
+
+        if (x1 > 0 && y1 > 0) {
+          SUM++;
+          sumPixel += sum[(y1-1)*width + x1 - 1];}
+        uint8 meanPixel = sumPixel / ((x2 - x1 + 1) * (y2 - y1 + 1));
+        MULT+=2;
+        ImageSetPixel(img, x, y, meanPixel);
+    }
+}
+
+// Libera a memória alocada para a imagem integral
+free(sum);
+}
 
 
 

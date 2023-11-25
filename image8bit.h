@@ -24,6 +24,8 @@ extern const uint8 PixMax;
 typedef struct image *Image;
 
 #define COMP InstrCount[2]
+#define MULT InstrCount[3]
+#define SUM InstrCount[4]
 /// Error handling functions
 
 /// Error cause.

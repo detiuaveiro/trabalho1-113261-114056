@@ -201,7 +201,9 @@ int main(int ac, char* av[]) {
       int dx; int dy;
       if (sscanf(av[k], "%d,%d", &dx, &dy) != 2) { err = 5; break; }
       fprintf(stderr, "Blur I%d with %dx%d mean filter\n", n-1, 2*dx+1, 2*dy+1);
+      InstrReset();
       ImageBlur(img[n-1], dx, dy);
+      InstrPrint();
     } else if (strcmp(av[k], "save") == 0) {
       if (++k >= ac) { err = 1; break; }
       if (n < 1) { err = 2; break; }
