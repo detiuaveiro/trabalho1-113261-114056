@@ -780,13 +780,13 @@ void ImageBlur(Image img, int dx, int dy) { ///
   }
   for (int index = 0; index < height * width; index++){
     img->pixel[index] = copia->pixel[index];
-  }
+  } 
   ImageDestroy(&copia);
 }
 
 
 
-//Blur 2
+//Blur 2 - optimize version
 
 /*int width = ImageWidth(img);
 int height = ImageHeight(img);
