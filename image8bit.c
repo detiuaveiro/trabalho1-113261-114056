@@ -726,7 +726,7 @@ void ImageBlur(Image img, int dx, int dy) { ///recebe uma imagem img e dois valo
 
 
 //BLUR 1 
- assert(img->width >= 0 && img->height >= 0);
+assert(img->width >= 0 && img->height >= 0);
   
 
   int width = img->width;
@@ -821,7 +821,7 @@ for (int y = 0; y < height; y++) {
           sumPixel += sum[(y1-1)*width + x1 - 1];}
         
         // Calcula a média dos pixels na janela
-        uint8 meanPixel = sumPixel / ((x2 - x1 + 1) * (y2 - y1 + 1));
+        uint8 meanPixel = round((double)sumPixel / ((x2 - x1 + 1) * (y2 - y1 + 1)));
         MULT+=2;
 
         // Define o pixel na imagem original para a média calculada
@@ -830,10 +830,10 @@ for (int y = 0; y < height; y++) {
 }
 
 // Libera a memória alocada para a imagem integral
-free(sum);*/
+free(sum);
 
-
-
+}
+*/
 
 
 
