@@ -770,15 +770,18 @@ void ImageBlur(Image img, int dx, int dy) { ///recebe uma imagem img e dois valo
 
 
 
-//Blur 2 - optimize version
+//Blur 2 - optimize version  -> Esta é a segunda versão de blur, sendo que para ser analisada, esta 
+//                             deve ser de descomentada
 
-/*int width = ImageWidth(img);
+/*
+int width = ImageWidth(img);
 int height = ImageHeight(img);
 
 // Aloca memória para a imagem integral
 int* sum = (int*)malloc(width * height * sizeof(int));
 
-// Calcula a imagem integral em duas passagens
+// Calcula a imagem integral
+// Calculo da soma cumulativa ao longo das linhas
 for (int y = 0; y < height; y++) {
     for (int x = 0; x < width; x++) {
         sum[y*width + x] = ImageGetPixel(img, x, y);
@@ -786,6 +789,7 @@ for (int y = 0; y < height; y++) {
         if (x > 0) sum[y*width + x] += sum[y*width + x - 1];
     }
 }
+// Em seguida, adiciona a soma cumulativa ao longo das colunas
 for (int x = 0; x < width; x++) {
     for (int y = 1; y < height; y++) {
         SUM++;
@@ -794,12 +798,16 @@ for (int x = 0; x < width; x++) {
 }
 
 // Aplica o filtro de média usando a imagem integral
+ // Para cada pixel, calcula a média dos pixels em uma janela ao redor dele
 for (int y = 0; y < height; y++) {
     for (int x = 0; x < width; x++) {
+      // Define os limites da janela
         int x1 = max(0, x - dx);
         int x2 = min(width - 1, x + dx);
         int y1 = max(0, y - dy);
         int y2 = min(height - 1, y + dy);
+
+          // Calcula a soma dos pixels na janela usando a imagem integral
         int sumPixel = sum[y2*width + x2];
         if (x1 > 0){ 
           SUM++;
@@ -811,8 +819,12 @@ for (int y = 0; y < height; y++) {
         if (x1 > 0 && y1 > 0) {
           SUM++;
           sumPixel += sum[(y1-1)*width + x1 - 1];}
+        
+        // Calcula a média dos pixels na janela
         uint8 meanPixel = sumPixel / ((x2 - x1 + 1) * (y2 - y1 + 1));
         MULT+=2;
+
+        // Define o pixel na imagem original para a média calculada
         ImageSetPixel(img, x, y, meanPixel);
     }
 }
